@@ -39,7 +39,16 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ], 
+        'business' => [
+            'driver' => 'sanctum',
+            'provider' => 'businesses',
         ],
+        'client' => [
+            'driver' => 'sanctum',
+            'provider' => 'clients',
+        ],
+
     ],
 
     /*
@@ -64,7 +73,14 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
+        'buesinesses' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Business::class,
+        ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Clients::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

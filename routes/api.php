@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ApiV1\Auth\BusinessAuthController;
+use App\Http\Controllers\ApiV1\BusinessController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('/v1/')->group(function(){
+    
+    Route::post('businesses/login',[BusinessAuthController::class,'login']);
+    Route::post('businesses/register', [BusinessAuthController::class, 'register']);
+    Route::get('business-types',[BusinessController::class,'businessType']);
+    
+    Route::middleware('auth:sanctum')->group(function () {
+       
+        Route::post('businesses/logout', [BusinessAuthController::class, 'logout']);
+    });
+
 });
