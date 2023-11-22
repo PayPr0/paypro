@@ -22,7 +22,7 @@ steps:
     - RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" -d "" -X POST $_APP_BASE_URL);
       if ["200" != "$RESPONSE"]; then 
           echo "FAIL migrations failed"
-          exit 1;  
+          exit 1;
       else
           echo "PASS migrations ran successfully"
       fi
