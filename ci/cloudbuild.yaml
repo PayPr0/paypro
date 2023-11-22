@@ -19,8 +19,7 @@ steps:
   entrypoint: "bash"
   args:
     - "-c"
-    - RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" \
-                      -d "" -X POST $_APP_BASE_URL)
+    - RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" -d "" -X POST $APP_BASE_URL)
       if [ "200" != "$$RESPONSE" ];
       then
           echo "FAIL: migrations failed" exit 1;
