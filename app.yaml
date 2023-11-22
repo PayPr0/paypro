@@ -21,6 +21,6 @@ env_variables:
     APP_DEBUG: true
     APP_ENV: production
     APP_KEY: base64:J8lkyjBJA6V3cI+s/ErSa7MJDMTBYaWx4NFXwPSxFZI=
-    APP_NAME: "GCP App - CODE"
+    APP_NAME: "PayPro"
 
     LOG_LEVEL: debug
