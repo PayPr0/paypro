@@ -27,3 +27,14 @@ env_variables:
     APP_NAME: "PayPro"
 
     LOG_LEVEL: debug
+
+    DB_DATABASE: paypro
+    DB_USERNAME: root
+    DB_PASSWORD: klusterthon
+    DB_SOCKET: '/cloudsql/optical-genre-405905:europe-west2:klusterthon273'
+
+beta_settings:
+    cloud_sql_instances: 'optical-genre-405905:europe-west2:klusterthon273'
+
+build_env_variables:
+  GOOGLE_COMPOSER_VERSION: 2.5.8
