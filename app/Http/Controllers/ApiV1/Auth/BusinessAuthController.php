@@ -47,7 +47,7 @@ class BusinessAuthController extends Controller
                             ->orWhere('phone',$request->phone)
                             ->first();
 
-        if(!$business->id){
+        if(!$business){
             return response()->json([
                 'status'=>0,
                 'message'=>"Business not found"

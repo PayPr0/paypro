@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiV1\Auth\BusinessAuthController;
 use App\Http\Controllers\ApiV1\BusinessController;
+use App\Http\Controllers\ApiV1\ClientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ Route::prefix('/v1/')->group(function(){
     Route::middleware('auth:sanctum')->group(function () {
        
         Route::post('businesses/logout', [BusinessAuthController::class, 'logout']);
+        Route::resource('clients',ClientController::class)->except(['edit','create']);
     });
 
 });

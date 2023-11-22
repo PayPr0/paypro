@@ -14,12 +14,38 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
+    private $metalinks;
+
+    public function __construct()
+    {
+        $this->metalinks = [
+            'viewAllClient' => route('clients.index'),
+            'updateClient' => route('clients.update'),
+            'delectClient' => route('clients.destroy'),
+            'getClient' => rout('clients.show')
+        ]
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        if (Auth::check() && !(Auth::user() instanceof Business)) {
+            // The authenticated user is an instance of the Business model
+            return response()->errorResponse(
+                'Only Businesses can access clients',
+                [],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $clients = Client::businessClient()->paginate(20);
+        return reponse()->successResponse(
+            'Retrieved succesfully',
+            ClientService::collecion($clients),
+            Response::HTTP_OK,
+            $this->metalinks
+        )
     }
 
     /**
@@ -38,6 +64,8 @@ class ClientController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'nullable|email|unique:clients,email',
             'phone' => "string|nullable|unique:clients,phone",
+            'name' => 'nullable',
+            'address'=>'nullable'
         ]);
 
         if ($validator->fails()) {
@@ -52,17 +80,13 @@ class ClientController extends Controller
             );
         }
 
-        $business = Auth::user();
-        if(!Business::find($business->id)){
-            
-            return response()->json(
-                [
-                    'status' => 0,
-                    'message' => "The login user must be a business"
-                ],
+        if (Auth::check() && !(Auth::user() instanceof Business)) {
+            // The authenticated user is an instance of the Business model
+            return response()->errorResponse(
+                'Only Businesses can access clients',
+                [],
                 Response::HTTP_BAD_REQUEST
             );
-            
         }
 
         $client = $clientService->createClient($request);
@@ -78,6 +102,7 @@ class ClientController extends Controller
             ...array($client),
             'business_client_id' => $businessClient->business_client_id
         ];
+
         return new ClientResource($data);
 
     }
@@ -87,7 +112,12 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        
+        if($client){
+            return response()->successResponse("Client retrieve sucessfully",ClientResource::make($client),
+            Response::HTTP_ACCEPTED,$this->metalinks);
+        }
+
+        return response()->errorResponse("Oop Something went wrong");
     }
 
     /**
@@ -120,7 +150,22 @@ class ClientController extends Controller
             );
         }
 
-        
+        $update = $clientService->updateClient($request);
+
+        if(!$update){
+            return response()->errorResponse("something went wrong",[],Response::HTTP_BAD_REQUEST,);
+        }
+
+        $data = [
+            'status' => 1,
+            'message' => 'Client updated successfully',
+            'client' => ClientResource::make($client)
+        ];
+
+        return response()->successResponse('Client updated successfully',
+            ClientResource::make($client),
+            Response::HTTP_OK
+        );
         
     }
 
@@ -129,6 +174,14 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        //
+        if($client->delete()){
+            return response()->successResponse(
+                'Client deleted successfully',
+                [],
+                Response::HTTP_OK
+            );
+        }
+
+        return response()->errorResponse("something went wrong", [], Response::HTTP_BAD_REQUEST);
     }
 }

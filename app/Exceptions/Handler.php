@@ -37,7 +37,7 @@ class Handler extends ExceptionHandler
             }
         });
 
-        $this->renderable(function (AuthenticationException $e, $request) {
+        $this->reportable(function (AuthenticationException $e, $request) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json(['message' => 'unAuthenticated'], 401);
             }
@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
             }
         });
 
-        $this->renderable(function (NotFoundHttpException $e, $request) {
+        $this->reportable(function (NotFoundHttpException $e, $request) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json(['message' => 'The requested link does not exist'], 404);
             }
