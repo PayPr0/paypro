@@ -1,8 +1,9 @@
-runtime: php82
+runtime: php
 env: flex
 
 runtime_config: 
     document_root: public
+    runtime_version: "8.2"  
 
 # Ensure we skip ".env", which is only for local development
 skip_files: 
