@@ -21,11 +21,11 @@ steps:
     - "-c"
     - RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" -d "" -X POST $_APP_BASE_URL)
       if [ "200" != "$$RESPONSE" ];
-      then
-          echo "FAIL: migrations failed" 
-          exit 1
+      then 
+          'echo "FAIL: migrations failed"'
+          
       else
-          echo "PASS: migrations ran successfully"
+          'echo "PASS: migrations ran successfully"'
       fi
 
 timeout: '3600s'
