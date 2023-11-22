@@ -30,7 +30,7 @@ env_variables:
 
     DB_DATABASE: paypro
     DB_USERNAME: root
-    DB_PASSWORD: klusterthon
+    DB_PASSWORD: klusterthon273
     DB_SOCKET: '/cloudsql/optical-genre-405905:europe-west2:klusterthon273'
 
 beta_settings:
