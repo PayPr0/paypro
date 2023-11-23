@@ -29,5 +29,10 @@ class Client extends Model
     {
         return $query->wherePivot('business_id',auth()->user()->id);
     }
+
+    public function refreshToken()
+    {
+        return $this->hasOne(RefreshToken::class);
+    }
 }
     

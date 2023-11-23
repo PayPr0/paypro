@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiV1\Auth\BusinessAuthController;
+use App\Http\Controllers\ApiV1\Auth\OauthController;
 use App\Http\Controllers\ApiV1\BusinessController;
 use App\Http\Controllers\ApiV1\ClientController;
 use App\Http\Controllers\ApiV1\InvoiceController;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('/v1/')->group(function(){
-    
+    Route::post('auth/refresh-token',[OauthController::class,'refresh'])->name('auth.token.refresh');
     Route::post('businesses/login',[BusinessAuthController::class,'login']);
     Route::post('businesses/register', [BusinessAuthController::class, 'register']);
     Route::get('business-types',[BusinessController::class,'businessType']);
