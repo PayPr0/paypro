@@ -34,7 +34,7 @@ Class OTPService
 
     static public function getToken()
     {
-        return uniqid();
+        return str_pad(rand(0, 100000), 6, "0", STR_PAD_BOTH);
     }
 
     public function verifyOtp($client_id,$token):array

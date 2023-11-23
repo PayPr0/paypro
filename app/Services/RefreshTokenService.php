@@ -10,7 +10,7 @@ class RefreshTokenService
 
     public function createRefreshToken(array $data)
     {
-        $salt = $data['business_id'] ? 'B' : 'C';
+        $salt = ($data['business_id'] ?? null) ? 'B' : 'C';
 
         return RefreshToken::updateOrCreate([
             'business_id'=>$data['business_id'] ?? null,

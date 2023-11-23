@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiV1\Auth\BusinessAuthController;
+use App\Http\Controllers\ApiV1\Auth\ClientAuthController;
 use App\Http\Controllers\ApiV1\Auth\OauthController;
 use App\Http\Controllers\ApiV1\BusinessController;
 use App\Http\Controllers\ApiV1\ClientController;
@@ -20,9 +21,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/v1/')->group(function(){
     Route::post('auth/refresh-token',[OauthController::class,'refresh'])->name('auth.token.refresh');
+    //Business
     Route::post('businesses/login',[BusinessAuthController::class,'login']);
     Route::post('businesses/register', [BusinessAuthController::class, 'register']);
     Route::get('business-types',[BusinessController::class,'businessType']);
+
+    //Client
+    Route::post('send-otp', [ClientAuthController::class, 'getOtp'])->name('client.otp');
+    Route::post('client/login', [ClientAuthController::class, 'otpLogin'])->name('client.login');
+
     
     Route::middleware('auth:sanctum')->group(function () {
        
