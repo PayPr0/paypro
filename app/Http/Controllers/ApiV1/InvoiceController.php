@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers\ApiV1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\Business;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Services\InvoiceService;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\InvoiceResource;
+use App\Http\Requests\CreateInvoiceRequest;
 
 class InvoiceController extends Controller
 {
@@ -27,9 +34,29 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateInvoiceRequest $request, InvoiceService $invoiceService)
     {
-        //
+       
+        $business = Business::find(auth()->user()->id);
+
+        $client =  $business->clients()->wherePivot('client_id', $request->client_id)->first();
+
+            if (!$client) {
+                abort(404);
+        };
+        
+        $invoiceId = uniqid(Str::substr($business->name, 0, 3));
+
+        $invoice =  $invoiceService->createInvoiceForClient($invoiceId, $business->id,
+        $client->id, $request->amount, $request->description, $request->amount);
+
+        return response()->successResponse(
+            'invoice created successfully',
+            InvoiceResource::make($invoice),
+            Response::HTTP_CREATED
+        );
+        
+
     }
 
     /**
