@@ -67,5 +67,8 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "platform": {
+        "ext-sodium": "7.4"
+    }
 }
