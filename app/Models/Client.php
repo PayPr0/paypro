@@ -17,7 +17,7 @@ class Client extends Model
 
     public function businesses()
     {
-        return $this->belongsToMany(Business::class, 'business_clients');
+        return $this->belongsToMany(Business::class, 'business_clents');
     }
 
     public function invoices()
@@ -25,9 +25,9 @@ class Client extends Model
         return $this->hasMany(Invoice::class);
     }
 
-    public function scopeBusnessClient(Builder $query):void
+    public function scopeBusinessClient($query)
     {
-        $query->wherePivot('business_id',auth()->id());
+        return $query->wherePivot('business_id',auth()->user()->id);
     }
 }
     

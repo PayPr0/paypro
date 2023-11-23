@@ -29,7 +29,7 @@ class Business extends Model
 
     public function clients()
     {
-        return $this->belongsToMany(Client::class, 'business_clients');
+        return $this->belongsToMany(Client::class, 'business_clents');
     }
 
     public function invoices()

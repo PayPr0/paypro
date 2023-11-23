@@ -10,7 +10,9 @@ use App\Services\ClientService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -20,10 +22,11 @@ class ClientController extends Controller
     {
         $this->metalinks = [
             'viewAllClient' => route('clients.index'),
-            'updateClient' => route('clients.update'),
-            'delectClient' => route('clients.destroy'),
-            'getClient' => rout('clients.show')
-        ]
+            'updateClient' => route('clients.update',"client_id"),
+            'createClient' => route('clients.store'),
+            'delectClient' => route('clients.destroy',"client_id"),
+            'getClient' => route('clients.show',"client_id")
+        ];
     }
     /**
      * Display a listing of the resource.
@@ -38,14 +41,15 @@ class ClientController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+        $business = Business::find(auth()->user()->id);
+        $clients =$business->clients()->paginate(20);;
 
-        $clients = Client::businessClient()->paginate(20);
-        return reponse()->successResponse(
+        return response()->successResponse(
             'Retrieved succesfully',
-            ClientService::collecion($clients),
+            ClientResource::collection($clients),
             Response::HTTP_OK,
             $this->metalinks
-        )
+        );
     }
 
     /**
@@ -89,21 +93,45 @@ class ClientController extends Controller
             );
         }
 
-        $client = $clientService->createClient($request);
-        $client->businesses()->attach($business, [
-            'business_client_id' => Str::slug($business->name . $client->id . time())
-        ]);
+        $business = Business::find(auth()->user()->id);
 
-        $businessClient = $client->businesses()
-                            ->where('id',$business->id)
-                            ->first();
-        
-        $data = [
-            ...array($client),
-            'business_client_id' => $businessClient->business_client_id
-        ];
+        try{
+            DB::beginTransaction();
 
-        return new ClientResource($data);
+            $client = $clientService->createClient($request);
+            
+            $client->businesses()->attach($business, [
+                'client_business_id' => Str::slug($business->name."/".$client->id . time())
+            ]);
+            
+            DB::commit();
+
+            // $client1 =  $business->clients()->wherePivot('client_id',$client->id)->first();
+
+            $client1 = Business::join('business_clents',"businesses.id", "=" ,"business_clents.business_id")
+                                ->where('business_clents.client_id',$client->id)
+                                ->first('client_business_id');
+
+            $data = [
+                'client' => ClientResource::make($client),
+                'business_client_id' => $client1->client_business_id
+            ];
+            return response()->successResponse(
+                'Client created',
+                $data,
+                Response::HTTP_OK,
+                $this->metalinks
+            );
+        }catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->errorResponse(
+                'something went wrong',
+                [],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
     }
 
@@ -113,11 +141,13 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         if($client){
-            return response()->successResponse("Client retrieve sucessfully",ClientResource::make($client),
+            return response()->successResponse(
+                "Client retrieve sucessfully",
+                ClientResource::make($client),
             Response::HTTP_ACCEPTED,$this->metalinks);
         }
 
-        return response()->errorResponse("Oop Something went wrong");
+        return response()->errorResponse("Oop client does not exit");
     }
 
     /**
@@ -150,7 +180,7 @@ class ClientController extends Controller
             );
         }
 
-        $update = $clientService->updateClient($request);
+        $update = $clientService->updateClient($client,$request);
 
         if(!$update){
             return response()->errorResponse("something went wrong",[],Response::HTTP_BAD_REQUEST,);

@@ -31,29 +31,37 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(function (ModelNotFoundException $e, $request) {
-            if ($request->wantsJson() || $request->is('api/*')) {
+        
+
+        
+        
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($request->wantsJson() || $request->is('api/*')) {
+            // Custom handling for ModelNotFoundException
+            if ($exception instanceof ModelNotFoundException) {
                 return response()->json(['message' => 'Item Not Found'], 404);
             }
-        });
 
-        $this->reportable(function (AuthenticationException $e, $request) {
-            if ($request->wantsJson() || $request->is('api/*')) {
-                return response()->json(['message' => 'unAuthenticated'], 401);
-            }
-        });
-
-        $this->renderable(function (ValidationException $e, $request) {
-            if ($request->wantsJson() || $request->is('api/*')) {
-                $errors = $e->validator->errors()->getMessages();
+            if ($exception instanceof ValidationException) {
+                $errors = $exception->validator->errors()->getMessages();
                 return response()->errorResponse($errors, 422);
             }
-        });
 
-        $this->reportable(function (NotFoundHttpException $e, $request) {
-            if ($request->wantsJson() || $request->is('api/*')) {
+            if ($exception instanceof AuthenticationException) {
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
+            
+            // Custom handling for NotFoundHttpException
+            if ($exception instanceof NotFoundHttpException) {
                 return response()->json(['message' => 'The requested link does not exist'], 404);
             }
-        });
+            
+        }
+
+        // Default handling for other exceptions
+        return parent::render($request, $exception);
     }
 }
