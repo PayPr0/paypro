@@ -28,6 +28,7 @@ class ClientController extends Controller
             'getClient' => route('clients.show',"client_id")
         ];
     }
+    
     /**
      * Display a listing of the resource.
      */
