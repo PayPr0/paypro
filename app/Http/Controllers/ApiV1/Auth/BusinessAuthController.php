@@ -7,6 +7,7 @@ use App\Http\Requests\BusinessRequest;
 use App\Http\Resources\BusinessResource;
 use App\Models\Business;
 use App\Services\BusinessService;
+use App\Services\RefreshTokenService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,7 +25,7 @@ class BusinessAuthController extends Controller
      * 
      * @return Response {'token':'gkhlmskljdisljkdjskildisjdisdjskild'}
      */
-    public function login(Request $request)
+    public function login(Request $request,RefreshTokenService $refreshTokenService)
     {   
         $validator = Validator::make($request->all(),[
             'email' => 'nullable|email',
@@ -68,12 +69,18 @@ class BusinessAuthController extends Controller
         }
 
         $token = $business->createToken('businessToken')->plainTextToken;
+        $refreshToken = $refreshTokenService->createRefreshToken([
+            'business_id' => $business->id
+        ]);
         
         return response()->json([
             'status' => 1,
             'token' => $token,
+            'refresh_token' => $refreshToken->refresh_token,
+            'expire_at' => Date('d-m-y H:i:s',strtotime(now()->addMinutes(30))),
+            'toke_type'=> 'Bearer', 
             'message'=> "Successfully loged in",
-            'business' => $business
+            'business' => $business,
             ],
             Response::HTTP_OK
         );

@@ -36,4 +36,9 @@ class Business extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function refreshToken()
+    {
+        return $this->hasOne(RefreshToken::class);
+    }
 }
