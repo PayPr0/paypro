@@ -24,7 +24,7 @@ env_variables:
     APP_DEBUG: true
     APP_ENV: production
     APP_KEY: base64:J8lkyjBJA6V3cI+s/ErSa7MJDMTBYaWx4NFXwPSxFZI=
-    APP_NAME: "PayPro"
+    APP_NAME: "PaYPrO"
 
     LOG_LEVEL: debug
 
@@ -32,6 +32,16 @@ env_variables:
     DB_USERNAME: root
     DB_PASSWORD: klusterthon273
     DB_SOCKET: '/cloudsql/optical-genre-405905:europe-west2:klusterthon273'
+
+    MAIL_MAILER: smtp
+    MAIL_HOST: smtp.zoho.com
+    MAIL_PORT: 465
+    MAIL_USERNAME: tobisamuel70@gmail.com
+    MAIL_PASSWORD: "Awodumil@3"
+    MAIL_ENCRYPTION: ssl
+    MAIL_FROM_ADDRESS: tobisamuel70@gmail.com
+    MAIL_FROM_NAME: "${APP_NAME}"
+
 
 beta_settings:
     cloud_sql_instances: 'optical-genre-405905:europe-west2:klusterthon273'
