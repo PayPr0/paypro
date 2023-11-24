@@ -25,7 +25,9 @@ class BusinessService
     
         ]);
 
-        return $this->createPaystackSubAccount($business);
+        $this->createPaystackSubAccount($business);
+
+        return $business;
         
     }
 
