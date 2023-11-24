@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Notifications\InvoiceNotification;
 
 class InvoiceController extends Controller
 {
@@ -49,6 +50,8 @@ class InvoiceController extends Controller
 
         $invoice =  $invoiceService->createInvoiceForClient($invoiceId, $business->id,
         $client->id, $request->amount, $request->description, $request->amount);
+
+        $client->notify(new InvoiceNotification($invoice));
 
         return response()->successResponse(
             'invoice created successfully',

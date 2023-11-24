@@ -23,6 +23,8 @@ class InvoiceResource extends JsonResource
             'description' => $this->description,
             'balance' => $this->balance,
             'status' => StatusResource::make($this->status),
+            'client' => ClientResource::make($this->client),
+            'business' => BusinessResource::make($this->business)
         ];
     }
 }
