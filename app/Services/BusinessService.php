@@ -77,7 +77,7 @@ class BusinessService
            
                 return $bankCode; 
             } else {
-                return  response()->errorResonse('No bank found matching the search term.');
+                return  response()->errorResonse('No bank found matching the bank inputed.');
             }
         } else {
             
