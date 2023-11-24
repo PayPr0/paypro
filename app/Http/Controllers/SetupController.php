@@ -13,7 +13,7 @@ class SetupController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // try {
+        try {
 
             Log::debug('Starting: Run database migration');
 
@@ -21,15 +21,14 @@ class SetupController extends Controller
             Artisan::call('migrate', [
                 '--force' => true
             ]);
-            Artisan::call('db:seed');
            
             Log::debug('Finished: Run database migration');
-        // } catch (\Exception $e) {
-        //     // log the error
-        //     Log::error($e);
+        } catch (\Exception $e) {
+            // log the error
+            Log::error($e);
 
-        //     return response('not ok', 500);
-        // }
+            return response('not ok', 500);
+        }
 
         return response('ok', 200);
     }

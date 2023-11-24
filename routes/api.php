@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiV1\Auth\OauthController;
 use App\Http\Controllers\ApiV1\BusinessController;
 use App\Http\Controllers\ApiV1\ClientController;
 use App\Http\Controllers\ApiV1\InvoiceController;
+use App\Http\Controllers\ApiV1\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,8 @@ Route::prefix('/v1/')->group(function(){
     Route::post('send-otp', [ClientAuthController::class, 'getOtp'])->name('client.otp');
     Route::post('client/login', [ClientAuthController::class, 'otpLogin'])->name('client.login');
 
+    //Payments
+    Route::post('payments/validate-invoice',[PaymentController::class,'invoiceValidate'])->name('payments.validate.invoice');
     
     Route::middleware('auth:sanctum')->group(function () {
        
