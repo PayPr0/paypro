@@ -35,13 +35,15 @@ Route::prefix('/v1/')->group(function(){
     //Payments
     Route::post('payments/validate-invoice',[PaymentController::class,'invoiceValidate'])->name('payments.validate.invoice');
     Route::post('payments/metadata-callback',[PaymentController::class, 'paymentCallback'])->name('payments.metadata');
-    Route::resource('payments',PaymentController::class)->only(['index']);
     
     Route::middleware('auth:sanctum')->group(function () {
-       
+        
         Route::post('businesses/logout', [BusinessAuthController::class, 'logout']);
         Route::resource('clients',ClientController::class)->except(['edit','create']);
         Route::resource('invoice',InvoiceController::class)->except(['edit','create']);
+
+        //payments
+        Route::resource('payments',PaymentController::class)->only(['index']);
     });
 
 });
