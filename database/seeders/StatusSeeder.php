@@ -18,6 +18,7 @@ class StatusSeeder extends Seeder
             ['name' => 'close', 'tag' => 'danger', 'color' => 'red'],
             ['name' => 'pending', 'tag' => 'info', 'color' => 'blue'],
             ['name' => 'nopaid', 'tag' => 'warning', 'color' => 'yellow'],
+            ['name' => 'paid', 'tag' => 'success', 'color' => 'green'],
             ['name' => 'active', 'tag' => 'success', 'color' => 'green'],
             ['name' => 'inactive', 'tag' => 'secondary', 'color' => 'grey'],
         ];

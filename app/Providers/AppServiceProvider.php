@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Config::set('paystack.secret', env('PAYSTACK_SECRET_KEY'));
         // Api success response
         Response::macro('successResponse', function ($message = null, $data = [], $code = 200,$mata=[]) {
             return response()->json([

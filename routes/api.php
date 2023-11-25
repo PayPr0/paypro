@@ -34,6 +34,8 @@ Route::prefix('/v1/')->group(function(){
 
     //Payments
     Route::post('payments/validate-invoice',[PaymentController::class,'invoiceValidate'])->name('payments.validate.invoice');
+    Route::post('payments/metadata-callback',[PaymentController::class, 'paymentCallback'])->name('payments.metadata');
+    Route::resource('payments',PaymentController::class)->only(['index']);
     
     Route::middleware('auth:sanctum')->group(function () {
        

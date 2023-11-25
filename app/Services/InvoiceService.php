@@ -19,4 +19,10 @@ class InvoiceService
             'status_id' => statusId(config('status.Pending'))
         ]);
     }
+
+    public function updateInvoice(string $invoice_id, array $updates)
+    {
+        return Invoice::where('invoice_id', $invoice_id)->update($updates);
+    }
+    
 }

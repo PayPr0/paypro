@@ -7,12 +7,23 @@ use App\Http\Resources\InvoiceResource;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Services\InvoiceService;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    public $metalinks;
+    public function __construct()
+    {
+      $this->metalinks =[
+        'payments' => route('payments.index'),
+        'paymentsSearch' => route('payments.index',['s'=>'pending'])
+      ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -90,6 +101,7 @@ class PaymentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+
         $client = Client::where('email', $request->email)->first();
 
         if (!$client) {
@@ -116,9 +128,77 @@ class PaymentController extends Controller
             );
         }
 
-
-        
         return response()->successResponse("",InvoiceResource::make($invoice), Response::HTTP_OK);
     }
     
+    public function paymentCallback(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'invoice_id' => 'required',
+            "client_id" => 'required',
+            "payment_ref"=> "required",
+            "amount" => "required",
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors();
+
+            return response()->json(
+                [
+                    'status' => 0,
+                    'message' => $message
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $paymentService = app(PaymentService::class);
+        
+        $validatePayment = $paymentService->verifyTransaction($request->payment_ref);
+
+        $invoice = Invoice::where('client_id',$request->client_id)
+                            ->where('invoice_id',$request->invoice_id)
+                            ->first();
+        
+        if(!$invoice){
+            return response()->errorResponse('invoice does not exist', [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if(!$validatePayment) {
+            return response()->errorResponse('payment not succesful',[],Response::HTTP_BAD_REQUEST);
+        }
+
+        if($invoice->client->email != $validatePayment['email'])
+        {
+            return response()->errorResponse('payment email does not own this invoice', [], Response::HTTP_BAD_REQUEST);
+        }
+        
+        $data = [
+            'invoice_id' => $invoice->id,
+            'business_id' => $invoice->business_id,
+            'is_online' => $validatePayment['channel'] != 'cash',
+            'payment_method' => $validatePayment['channel'],
+            'amount' => $validatePayment['amount'],
+            'client_id' => $request->client_id,
+        ];
+
+        DB::beginTransaction();
+        $payment = $paymentService->createPayment($data);
+
+        $balance = $invoice->balance - $validatePayment['amount'];
+        $status = $invoice->balance == 0 ? statusId(config('status.paid')):
+                             statusId(config('status.Pending'));
+        app(InvoiceService::class)->updateInvoice($request->invoice_id,[
+            'balance' => $balance,
+            'status_id' => $status
+        ]);
+           
+        DB::commit();
+
+        return response()->successResponse('payment validated',
+        InvoiceResource::make($invoice)
+        ,Response::HTTP_OK,
+        $this->metalinks);
+
+    }
 }
