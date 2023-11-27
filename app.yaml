@@ -42,7 +42,7 @@ env_variables:
     MAIL_FROM_ADDRESS: tobisamuel70@gmail.com
     MAIL_FROM_NAME: "${APP_NAME}"
 
-    PAYSTACK_SECRET_KEY=sk_test_d43520394b71c78409391837f92d7070508dc8a2
+    PAYSTACK_SECRET_KEY: sk_test_d43520394b71c78409391837f92d7070508dc8a2
 
 
 beta_settings:
