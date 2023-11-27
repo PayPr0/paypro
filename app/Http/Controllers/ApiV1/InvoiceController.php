@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Models\BusinessClent;
 use App\Notifications\InvoiceNotification;
 
 class InvoiceController extends Controller
@@ -93,5 +94,84 @@ class InvoiceController extends Controller
     {
         //
     }
+    
+    /**
+     * Search for both client and businesses on invoice
+     * 
+     * @param Request $request->query()
+     * 
+     * @return Response
+     */
+
+     public function searchBusiness(Request $request)
+     {
+        $param = $request->query();
+        $a =  isset($param['a']) ? $param['a'] : null;
+        $b =  isset($param['b']) ? $param['b'] : null;
+        $sta = isset($param['sta']) ? statusId($param['sta']) : '';
+        $c = isset($param['c']) ? $param['c'] : null;
+        $ivid = isset($param['ivid']) ? $param['ivid'] : null;
+
+        $businessClient = BusinessClent::where('client_business_id', 'like', '%' . $c . '%')
+            ->first();
+       
+        $invoices = Invoice::with('payments')
+            ->where('client_id', 'like', '%' . $businessClient->client_id ?? null . '%')
+            ->where('business_id', auth()->user()->id)
+            ->where(function($query)use($a){ return $a ? $query->where('amount',$a) : $query; })
+            ->where(function($query)use($b){ return $b ? $query->where('balance',$b) : $query; })
+            ->where('invoice_id', 'like', '%' . $ivid . '%')
+            ->where('status_id','like','%'. $sta.'%')
+            ->where(function ($query) use ($param) {
+                if (isset($param['ds']) && !isset($param['de'])) {
+                    return  $query->where('created_at', '>=', $param['ds']);
+                } elseif (!isset($param['ds']) && isset($param['de'])) {
+                    return  $query->where('created_at', '<=', $param['de']);
+                } elseif (isset($param['ds']) && isset($param['de'])) {
+                    return $query->whereBetween('created_at', [$param['ds'], $param['de']]);
+                } else {
+                    return $query;
+                }
+            })
+            ->paginate(20);
+
+        return response()->successResponse('', $invoices, Response::HTTP_OK);
+     }
+
+    public function searchClient(Request $request)
+    {
+        $param = $request->query();
+        $a =  isset($param['a']) ? $param['a'] : null;
+        $b =  isset($param['b']) ? $param['b'] : null;
+        $sta = isset($param['sta']) ? statusId($param['sta']) : '';
+        $c = isset($param['c']) ? $param['c'] : null;
+        $ivid = isset($param['ivid']) ? $param['ivid'] : null;
+        $businessClient = BusinessClent::where('client_business_id', 'like', '%' .$c. '%')
+                                        ->first();
+    
+        $invoices = Invoice::with('payments')
+            ->where('client_id', auth()->user()->id)
+            ->where('business_id', 'like', '%' . $businessClient->business_id ?? null . '%')
+            ->where(function($query)use($a){ return $a ? $query->where('amount',$a) : $query; })
+            ->where(function($query)use($b){ return $b ? $query->where('balance',$b) : $query; })
+            ->where('invoice_id', 'like', '%' . $ivid . '%')
+            ->where('status_id','like','%'. $sta.'%')
+            ->where(function ($query) use ($param) {
+                if (isset($param['ds']) && !isset($param['de'])) {
+                    return  $query->where('created_at', '>=', $param['ds']);
+                } elseif (!isset($param['ds']) && isset($param['de'])) {
+                    return  $query->where('created_at', '<=', $param['de']);
+                } elseif (isset($param['ds']) && isset($param['de'])) {
+                    return $query->whereBetween('created_at', [$param['ds'], $param['de']]);
+                } else {
+                    return $query;
+                }
+            })
+            ->paginate(20);
+
+        return response()->successResponse('', $invoices, Response::HTTP_OK);
+    }
+
+    
 
 }

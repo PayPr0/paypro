@@ -30,20 +30,14 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $param = $request->query();
-    
-    //   "ds" => "12-12-2011"
-   
-    //   "de" => "1-1-2012"
-        $payments = Payment::where('client_id', 'like', '%' . isset($param['c']) ?? null . '%');
-        
-   
+
         $payments = Payment::where('client_id', 'like', '%' . isset($param['c']) ?? null . '%')
                             ->where('business_id', 'like', '%' . isset($param['b']) ?? null . '%')
                             ->where('amount', 'like', '%' . isset($param['a']) ?? null . '%')
                             ->where(function($query)use($param){
                                 if (isset($param['ds']) && !isset($param['de'])) {
                                    return  $query->where('created_at', '>=', $param['ds']);
-                                } elseif (!isset($param['ds']) && isset($param['stop'])) {
+                                } elseif (!isset($param['ds']) && isset($param['de'])) {
                                    return  $query->where('created_at', '<=', $param['de']);
                                 } elseif (isset($param['ds']) && isset($param['de'])) {
                                     return $query->whereBetween('created_at', [$param['ds'], $param['de']]);

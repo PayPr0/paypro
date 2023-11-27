@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiV1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
 use App\Models\Business;
+use App\Models\BusinessClent;
 use App\Models\Client;
 use App\Services\ClientService;
 use Illuminate\Http\Request;
@@ -25,7 +26,8 @@ class ClientController extends Controller
             'updateClient' => route('clients.update',"client_id"),
             'createClient' => route('clients.store'),
             'delectClient' => route('clients.destroy',"client_id"),
-            'getClient' => route('clients.show',"client_id")
+            'getClient' => route('clients.show',"client_id"),
+            'search' => route('clients.search')
         ];
     }
     
@@ -215,4 +217,37 @@ class ClientController extends Controller
 
         return response()->errorResponse("something went wrong", [], Response::HTTP_BAD_REQUEST);
     }
+
+    /**
+     * Search by email / phone number  or by bussiness customer id
+     */
+
+     public function search(Request $request)
+     {
+        $param = $request->query();
+
+        if(isset($param['bcid']))
+        {
+            $data = BusinessClent::with('client')->where('client_business_id','like', '%'. $param['bcid'].'%')
+                                    ->where('business_id', auth()->user()->id)
+                                    ->first()->toArray();
+
+            return response()->successResponse('',$data,Response::HTTP_OK,$this->metalinks);
+        }
+
+        $e = isset($param['e']) ? $param['e'] : null;
+        $p = isset($param['p']) ? $param['p'] : null ;
+
+        $client = Client::where('email','like','%'. $e .'%')
+                        ->orWhere('phone', 'like', '%' . $p. '%')
+                        ->first();
+
+        $data = BusinessClent::with('client')->where('client_id', $client->id)
+            ->where('business_id',auth()->user()->id)
+        ->first()->toArray();
+
+        return response()->successResponse('', $data, Response::HTTP_OK, $this->metalinks);
+
+     }
+
 }

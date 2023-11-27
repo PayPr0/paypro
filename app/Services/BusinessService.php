@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Business;
 use App\Models\BusinessType;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
@@ -25,12 +26,19 @@ class BusinessService
     
         ]);
 
+        $this->createWallet($business);
         $this->createPaystackSubAccount($business);
 
         return $business;
         
     }
 
+    protected function createWallet($business)
+    {
+        Wallet::create([
+            'business_id' => $business->id,
+        ]);
+    }
 
 
     protected function createPaystackSubAccount($business)

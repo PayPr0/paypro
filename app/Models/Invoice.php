@@ -34,7 +34,7 @@ class Invoice extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function payment()
+    public function payments()
     {
         return $this->hasMany(Payment::class);
     }
