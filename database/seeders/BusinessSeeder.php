@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Business;
+use App\Models\Wallet;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class BusinessSeeder extends Seeder
     {
         //
         for ($i = 1; $i <= 3; $i++) {
-            Business::create([
+            $business = Business::create([
                 'name' => 'Business ' . $i,
                 'email' => 'business' . $i . '@example.com',
                 'phone' => '123456789' . $i,
@@ -25,6 +26,10 @@ class BusinessSeeder extends Seeder
                 'acct_number' => '000000000' . $i ,
                 'bank_name' => 'Bank ' . $i,
                 'business_type_id' => $i
+            ]);
+
+            Wallet::create([
+                'business_id'=>$business->id
             ]);
         }
     }

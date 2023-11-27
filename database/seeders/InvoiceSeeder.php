@@ -33,7 +33,7 @@ class InvoiceSeeder extends Seeder
         );
 
         $client->businesses()->attach($business, [
-            'client_business_id' => Str::slug($business->name . "/" . $client->id . time())
+            'client_business_id' => 'ESM655f556878514'
         ]);
 
         DB::commit();
@@ -42,9 +42,99 @@ class InvoiceSeeder extends Seeder
             'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
             'business_id' => $business->id,
             'client_id' => $client->id,
-            'status_id' => statusId(config('status.Pending')),
+            'status_id' => statusId('pending'),
             'amount' => 10000,
             'balance' => 10000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('paid'),
+            'amount' => 30000,
+            'balance' => 30000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('pending'),
+            'amount' => 1000,
+            'balance' => 1000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('paid'),
+            'amount' => 3000,
+            'balance' => 3000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('pending'),
+            'amount' => 70000,
+            'balance' => 70000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('paid'),
+            'amount' => 70000,
+            'balance' => 7000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('paid'),
+            'amount' => 70000,
+            'balance' => 7000,
+            'description' => [
+                'gas' => 3000,
+                '2 catton of noodles' => 7000
+            ]
+        ]);
+
+        Invoice::create([
+            'invoice_id' => uniqid(Str::substr($business->name, 0, 3)),
+            'business_id' => $business->id,
+            'client_id' => $client->id,
+            'status_id' => statusId('paid'),
+            'amount' => 70000,
+            'balance' => 7000,
             'description' => [
                 'gas' => 3000,
                 '2 catton of noodles' => 7000
